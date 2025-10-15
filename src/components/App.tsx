@@ -2,6 +2,7 @@ import { Link, NavLink, Navigate, Route, Routes } from "react-router-dom";
 import ReviewsIndex from "../routes/ReviewsIndex";
 import ReviewShow from "../routes/ReviewShow";
 import ReviewNew from "../routes/ReviewNew";
+// import type { Film, Review } from "../types"; - sanity test
 
 export default function App() {
   return (
