@@ -1,22 +1,8 @@
-import mubiLogo from "/logo.svg";
-
-const App = () => (
-  <div
-    style={{
-      height: "100vh",
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-    }}
-  >
-    <img
-      src={mubiLogo}
-      style={{
-        width: "30vw",
-        minWidth: "200px",
-      }}
-    />
-  </div>
-);
-
-export default App;
+export default function App() {
+  return (
+    <div style={{ padding: 16 }}>
+      <h1>Film Log</h1>
+      <p>Setting up…</p>
+    </div>
+  );
+}
