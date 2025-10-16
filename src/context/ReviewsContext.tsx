@@ -1,7 +1,8 @@
-import { createContext, useContext, useMemo, useState } from "react";
+import { createContext, useContext, useMemo, useRef, useState } from "react";
+import { API_URL } from "../constants";
 import type { Film, Review } from "../types";
 
-// Global shape
+// Global shape of our store
 type ReviewsStore = {
   films: Film[];
   reviews: Review[];
@@ -14,14 +15,33 @@ type ReviewsStore = {
   loadFilms: () => void;
 };
 
-const ReviewsCtx = createContext<ReviewsStore | null>(null);
+const ReviewsContext = createContext<ReviewsStore | null>(null);
 
-// Provider with placeholder state
 export function ReviewsProvider({ children }: { children: React.ReactNode }) {
-  const [films] = useState<Film[]>([]);
+  const [films, setFilms] = useState<Film[]>([]);
   const [reviews] = useState<Review[]>([]);
-  const [loadingFilms] = useState(false);
+  const [loadingFilms, setLoadingFilms] = useState(false);
   const [search, setSearch] = useState("");
+
+  // Prevent multiple fetches on re-render
+  const loadedRef = useRef(false);
+
+  // Fetch film data from API_URL
+  const loadFilms = () => {
+    if (loadedRef.current || loadingFilms) return;
+    loadedRef.current = true;
+    setLoadingFilms(true);
+
+    fetch(API_URL)
+      .then((r) => r.json())
+      .then((data: Film[]) => {
+        setFilms(data);
+      })
+      .catch((err) => {
+        console.error("Failed to load films:", err);
+      })
+      .finally(() => setLoadingFilms(false));
+  };
 
   const value = useMemo<ReviewsStore>(
     () => ({
@@ -30,21 +50,22 @@ export function ReviewsProvider({ children }: { children: React.ReactNode }) {
       loadingFilms,
       search,
       setSearch,
-      // empty placeholders
       addReview: () => "",
       deleteReview: () => {},
       getReviewById: () => undefined,
-      loadFilms: () => {},
+      loadFilms,
     }),
     [films, reviews, loadingFilms, search]
   );
 
-  return <ReviewsCtx.Provider value={value}>{children}</ReviewsCtx.Provider>;
+  return (
+    <ReviewsContext.Provider value={value}>{children}</ReviewsContext.Provider>
+  );
 }
 
-// Hooks for consuming the content
+// Hook for consuming the context
 export function useReviews() {
-  const ctx = useContext(ReviewsCtx);
+  const ctx = useContext(ReviewsContext);
   if (!ctx) throw new Error("useReviews must be used inside <ReviewsProvider>");
   return ctx;
 }
