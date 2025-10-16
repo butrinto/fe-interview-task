@@ -7,7 +7,7 @@ export default function ReviewsIndex() {
     useReviews();
   const [genre, setGenre] = useState<string>("All");
 
-  // Load films on mount
+  // Load films when the page mounts
   useEffect(() => {
     loadFilms();
   }, [loadFilms]);
