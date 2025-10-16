@@ -1,9 +1,10 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { useReviews } from "../context/ReviewsContext";
 
 export default function ReviewsIndex() {
-  const { loadFilms, films, reviews, loadingFilms } = useReviews();
+  const { loadFilms, films, reviews, loadingFilms, search, setSearch } =
+    useReviews();
 
   // Load films when the page mounts
   useEffect(() => {
@@ -18,19 +19,43 @@ export default function ReviewsIndex() {
     getFilm(filmId)?.release_year ?? undefined;
   const getImage = (filmId: string) => getFilm(filmId)?.image_url ?? "";
 
+  // Apply search filter
+  const filtered = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    return q
+      ? reviews.filter((r) => (r.filmTitle || "").toLowerCase().includes(q))
+      : reviews;
+  }, [reviews, search]);
+
   return (
     <div>
       <h2>My Reviews</h2>
 
+      {/* Search bar */}
+      <div style={{ marginBottom: 12 }}>
+        <input
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search by film title…"
+          style={{
+            width: "100%",
+            padding: 10,
+            borderRadius: 8,
+            border: "1px solid #ddd",
+          }}
+          aria-label="Search reviews by film title"
+        />
+      </div>
+
       {loadingFilms && <p>Loading film data...</p>}
 
-      {!loadingFilms && reviews.length === 0 && (
+      {!loadingFilms && filtered.length === 0 && (
         <p>
-          No reviews yet. <Link to="/new">Write one</Link>
+          No matching reviews. <Link to="/new">Write one</Link>
         </p>
       )}
 
-      {!loadingFilms && reviews.length > 0 && (
+      {!loadingFilms && filtered.length > 0 && (
         <ul
           style={{
             listStyle: "none",
@@ -41,7 +66,7 @@ export default function ReviewsIndex() {
             gap: 12,
           }}
         >
-          {reviews.map((r) => {
+          {filtered.map((r) => {
             const title = getTitle(r.filmId, r.filmTitle);
             const year = getYear(r.filmId);
             const img = getImage(r.filmId);
@@ -98,7 +123,6 @@ export default function ReviewsIndex() {
                         </span>
                       ) : null}
                     </h3>
-
                     <p
                       style={{
                         margin: 0,
@@ -108,7 +132,6 @@ export default function ReviewsIndex() {
                     >
                       {truncate(r.reviewText, 120)}
                     </p>
-
                     <small
                       style={{
                         opacity: 0.7,
