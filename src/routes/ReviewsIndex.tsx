@@ -1,17 +1,25 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useReviews } from "../context/ReviewsContext";
 
 export default function ReviewsIndex() {
   const { loadFilms, films, reviews, loadingFilms, search, setSearch } =
     useReviews();
+  const [genre, setGenre] = useState<string>("All");
 
-  // Load films when the page mounts
+  // Load films on mount
   useEffect(() => {
     loadFilms();
   }, [loadFilms]);
 
-  // Lookup helpers
+  // Build unique, sorted genre list from films
+  const genres = useMemo(() => {
+    const set = new Set<string>();
+    films.forEach((f) => f.genres?.forEach((g) => set.add(g)));
+    return ["All", ...Array.from(set).sort()];
+  }, [films]);
+
+  // Helpers to look up film metadata
   const getFilm = (filmId: string) => films.find((f) => f.id === filmId);
   const getTitle = (filmId: string, fallback: string) =>
     getFilm(filmId)?.title ?? fallback;
@@ -19,20 +27,24 @@ export default function ReviewsIndex() {
     getFilm(filmId)?.release_year ?? undefined;
   const getImage = (filmId: string) => getFilm(filmId)?.image_url ?? "";
 
-  // Apply search filter
+  // Apply search + genre filters
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
-    return q
-      ? reviews.filter((r) => (r.filmTitle || "").toLowerCase().includes(q))
-      : reviews;
-  }, [reviews, search]);
+    return reviews
+      .filter((r) => (q ? (r.filmTitle || "").toLowerCase().includes(q) : true))
+      .filter((r) => {
+        if (genre === "All") return true;
+        const film = getFilm(r.filmId);
+        return film?.genres?.includes(genre) ?? false;
+      });
+  }, [reviews, search, genre, films]);
 
   return (
     <div>
       <h2>My Reviews</h2>
 
-      {/* Search bar */}
-      <div style={{ marginBottom: 12 }}>
+      {/* Controls */}
+      <div style={{ display: "grid", gap: 8, marginBottom: 12 }}>
         <input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
@@ -45,6 +57,24 @@ export default function ReviewsIndex() {
           }}
           aria-label="Search reviews by film title"
         />
+
+        <select
+          value={genre}
+          onChange={(e) => setGenre(e.target.value)}
+          style={{
+            padding: 10,
+            borderRadius: 8,
+            border: "1px solid #ddd",
+            maxWidth: 260,
+          }}
+          aria-label="Filter reviews by genre"
+        >
+          {genres.map((g) => (
+            <option key={g} value={g}>
+              {g}
+            </option>
+          ))}
+        </select>
       </div>
 
       {loadingFilms && <p>Loading film data...</p>}
