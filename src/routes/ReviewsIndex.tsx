@@ -10,10 +10,13 @@ export default function ReviewsIndex() {
     loadFilms();
   }, [loadFilms]);
 
-  const getFilmTitle = (filmId: string) => {
-    const film = films.find((f) => f.id === filmId);
-    return film ? film.title : "Unknown film";
-  };
+  // Lookup helpers
+  const getFilm = (filmId: string) => films.find((f) => f.id === filmId);
+  const getTitle = (filmId: string, fallback: string) =>
+    getFilm(filmId)?.title ?? fallback;
+  const getYear = (filmId: string) =>
+    getFilm(filmId)?.release_year ?? undefined;
+  const getImage = (filmId: string) => getFilm(filmId)?.image_url ?? "";
 
   return (
     <div>
@@ -28,39 +31,102 @@ export default function ReviewsIndex() {
       )}
 
       {!loadingFilms && reviews.length > 0 && (
-        <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-          {reviews.map((r) => (
-            <li
-              key={r.id}
-              style={{
-                borderBottom: "1px solid #ddd",
-                padding: "12px 0",
-                marginBottom: 8,
-              }}
-            >
-              <h3 style={{ margin: "0 0 4px" }}>
-                <Link to={`/reviews/${r.id}`}>
-                  {r.filmTitle || getFilmTitle(r.filmId)}
-                </Link>
-              </h3>
-              <p
+        <ul
+          style={{
+            listStyle: "none",
+            padding: 0,
+            margin: 0,
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
+            gap: 12,
+          }}
+        >
+          {reviews.map((r) => {
+            const title = getTitle(r.filmId, r.filmTitle);
+            const year = getYear(r.filmId);
+            const img = getImage(r.filmId);
+
+            return (
+              <li
+                key={r.id}
                 style={{
-                  margin: "4px 0 8px",
-                  color: "#444",
-                  whiteSpace: "pre-line",
+                  border: "1px solid #ddd",
+                  borderRadius: 8,
+                  overflow: "hidden",
+                  background: "#fff",
                 }}
               >
-                {truncate(r.reviewText, 180)}
-              </p>
-              <small style={{ opacity: 0.7 }}>
-                {new Date(r.createdAt).toLocaleDateString("en-GB", {
-                  year: "numeric",
-                  month: "short",
-                  day: "numeric",
-                })}
-              </small>
-            </li>
-          ))}
+                <Link
+                  to={`/reviews/${r.id}`}
+                  style={{
+                    display: "block",
+                    textDecoration: "none",
+                    color: "inherit",
+                  }}
+                >
+                  <div
+                    style={{
+                      width: "100%",
+                      aspectRatio: "16/9",
+                      background: "#eee",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    {img ? (
+                      <img
+                        src={img}
+                        alt={title}
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "cover",
+                        }}
+                      />
+                    ) : (
+                      <span style={{ opacity: 0.6 }}>No image</span>
+                    )}
+                  </div>
+
+                  <div style={{ padding: 12 }}>
+                    <h3 style={{ margin: "0 0 4px" }}>
+                      {title}{" "}
+                      {year ? (
+                        <span style={{ opacity: 0.7, fontWeight: 400 }}>
+                          ({year})
+                        </span>
+                      ) : null}
+                    </h3>
+
+                    <p
+                      style={{
+                        margin: 0,
+                        opacity: 0.85,
+                        whiteSpace: "pre-line",
+                      }}
+                    >
+                      {truncate(r.reviewText, 120)}
+                    </p>
+
+                    <small
+                      style={{
+                        opacity: 0.7,
+                        display: "inline-block",
+                        marginTop: 8,
+                      }}
+                    >
+                      {new Date(r.createdAt).toLocaleDateString("en-GB", {
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
+                      })}
+                    </small>
+                  </div>
+                </Link>
+              </li>
+            );
+          })}
         </ul>
       )}
     </div>
