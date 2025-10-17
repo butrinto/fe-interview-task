@@ -3,23 +3,22 @@ import { Link } from "react-router-dom";
 import { useReviews } from "../context/ReviewsContext";
 
 export default function ReviewsIndex() {
-  const { loadFilms, films, reviews, loadingFilms, search, setSearch } =
-    useReviews();
+  const { loadFilms, films, reviews, loadingFilms } = useReviews();
   const [genre, setGenre] = useState<string>("All");
 
-  // Load films when the page mounts
+  // Load films on mount
   useEffect(() => {
     loadFilms();
   }, [loadFilms]);
 
-  // Build unique, sorted genre list from films
+  // Unique, sorted genre list
   const genres = useMemo(() => {
     const set = new Set<string>();
     films.forEach((f) => f.genres?.forEach((g) => set.add(g)));
     return ["All", ...Array.from(set).sort()];
   }, [films]);
 
-  // Helpers to look up film metadata
+  // Helpers
   const getFilm = (filmId: string) => films.find((f) => f.id === filmId);
   const getTitle = (filmId: string, fallback: string) =>
     getFilm(filmId)?.title ?? fallback;
@@ -31,19 +30,16 @@ export default function ReviewsIndex() {
     return director?.name;
   };
 
-  // Apply search + genre filters
+  // Apply genre filter (search hidden for now)
   const filtered = useMemo(() => {
-    const q = search.trim().toLowerCase();
-    return reviews
-      .filter((r) => (q ? (r.filmTitle || "").toLowerCase().includes(q) : true))
-      .filter((r) => {
-        if (genre === "All") return true;
-        const film = getFilm(r.filmId);
-        return film?.genres?.includes(genre) ?? false;
-      });
-  }, [reviews, search, genre, films]);
+    return reviews.filter((r) => {
+      if (genre === "All") return true;
+      const film = getFilm(r.filmId);
+      return film?.genres?.includes(genre) ?? false;
+    });
+  }, [reviews, genre, films]);
 
-  // Thumbnail box size (keep in one place so it's easy to tweak)
+  // Thumbnail size
   const THUMB_W = 120;
   const THUMB_H = 80;
 
@@ -53,18 +49,21 @@ export default function ReviewsIndex() {
 
       {/* Controls */}
       <div style={{ display: "grid", gap: 8, marginBottom: 12 }}>
-        <input
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search by film title…"
-          style={{
-            width: "100%",
-            padding: 10,
-            borderRadius: 8,
-            border: "1px solid #ddd",
-          }}
-          aria-label="Search reviews by film title"
-        />
+        {/* Search bar hidden as not part of wireframe - kept for future use */}
+        {false && (
+          <input
+            value={""}
+            onChange={() => {}}
+            placeholder="Search by film title…"
+            style={{
+              width: "100%",
+              padding: 10,
+              borderRadius: 8,
+              border: "1px solid #ddd",
+            }}
+            aria-label="Search reviews by film title"
+          />
+        )}
 
         <select
           value={genre}
@@ -126,7 +125,7 @@ export default function ReviewsIndex() {
                 >
                   {/* Text on the left */}
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    {/* Meta block; minHeight ensures the paragraph starts under the thumbnail */}
+                    {/* Reserve height so the paragraph starts under the thumbnail */}
                     <div style={{ minHeight: THUMB_H }}>
                       <h3 style={{ margin: "0 0 4px", fontSize: 18 }}>
                         <strong>{title}</strong>
@@ -149,7 +148,7 @@ export default function ReviewsIndex() {
                         marginTop: 10,
                         opacity: 0.85,
                         whiteSpace: "pre-line",
-                        fontSize: 14, // one step smaller
+                        fontSize: 14,
                         lineHeight: 1.4,
                       }}
                     >
@@ -166,7 +165,7 @@ export default function ReviewsIndex() {
                     </div>
                   </div>
 
-                  {/* Poster on the right, cropped to fill (no bars) */}
+                  {/* Poster on the right, cropped to fill */}
                   <div
                     style={{
                       width: THUMB_W,
@@ -185,7 +184,7 @@ export default function ReviewsIndex() {
                         style={{
                           width: "100%",
                           height: "100%",
-                          objectFit: "cover", // fill the box, crop if needed
+                          objectFit: "cover",
                           display: "block",
                         }}
                       />
