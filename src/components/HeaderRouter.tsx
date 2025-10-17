@@ -24,12 +24,12 @@ export default function HeaderRouter() {
       <Header
         left={
           <button className="icon-btn" onClick={() => navigate(-1)}>
-            Back
+            <img src="/back-arrow.svg" alt="Back" />
           </button>
         }
         right={
           <button className="icon-btn" onClick={handleDelete}>
-            Delete
+            <img src="/delete.svg" alt="Delete" />
           </button>
         }
       />
@@ -42,11 +42,8 @@ export default function HeaderRouter() {
       <Header
         title="Film Log"
         right={
-          <button
-            className="icon-btn circle"
-            onClick={() => navigate("/reviews")}
-          >
-            ×
+          <button className="icon-btn" onClick={() => navigate("/reviews")}>
+            <img src="/back-arrow.svg" alt="Close" />
           </button>
         }
       />
@@ -58,8 +55,8 @@ export default function HeaderRouter() {
     <Header
       title="Film Log"
       right={
-        <Link to="/new" className="icon-btn circle">
-          +
+        <Link to="/new" className="icon-btn">
+          <img src="/plus-add.svg" alt="Add review" />
         </Link>
       }
     />
