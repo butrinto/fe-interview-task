@@ -7,19 +7,16 @@ export default function ReviewsIndex() {
     useReviews();
   const [genre, setGenre] = useState<string>("All");
 
-  // Load films when the page mounts
   useEffect(() => {
     loadFilms();
   }, [loadFilms]);
 
-  // Build unique, sorted genre list from films
   const genres = useMemo(() => {
     const set = new Set<string>();
     films.forEach((f) => f.genres?.forEach((g) => set.add(g)));
     return ["All", ...Array.from(set).sort()];
   }, [films]);
 
-  // Helpers to look up film metadata
   const getFilm = (filmId: string) => films.find((f) => f.id === filmId);
   const getTitle = (filmId: string, fallback: string) =>
     getFilm(filmId)?.title ?? fallback;
@@ -27,7 +24,6 @@ export default function ReviewsIndex() {
     getFilm(filmId)?.release_year ?? undefined;
   const getImage = (filmId: string) => getFilm(filmId)?.image_url ?? "";
 
-  // Apply search + genre filters
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
     return reviews
@@ -43,7 +39,6 @@ export default function ReviewsIndex() {
     <div>
       <h2>My Reviews</h2>
 
-      {/* Controls */}
       <div style={{ display: "grid", gap: 8, marginBottom: 12 }}>
         <input
           value={search}
@@ -121,60 +116,81 @@ export default function ReviewsIndex() {
                 >
                   <div
                     style={{
-                      width: "100%",
-                      aspectRatio: "16/9",
-                      background: "#eee",
                       display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
+                      alignItems: "flex-start",
+                      gap: 12,
+                      padding: 12,
                     }}
                   >
+                    <div style={{ flex: 1 }}>
+                      <h3 style={{ margin: "0 0 4px" }}>
+                        {title}{" "}
+                        {year ? (
+                          <span style={{ opacity: 0.7, fontWeight: 400 }}>
+                            ({year})
+                          </span>
+                        ) : null}
+                      </h3>
+
+                      <p
+                        style={{
+                          margin: 0,
+                          opacity: 0.85,
+                          whiteSpace: "pre-line",
+                        }}
+                      >
+                        {truncate(r.reviewText, 120)}
+                      </p>
+
+                      <small
+                        style={{
+                          opacity: 0.7,
+                          display: "inline-block",
+                          marginTop: 8,
+                        }}
+                      >
+                        {new Date(r.createdAt).toLocaleDateString("en-GB", {
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                        })}
+                      </small>
+                    </div>
+
                     {img ? (
                       <img
                         src={img}
                         alt={title}
                         style={{
-                          width: "100%",
-                          height: "100%",
-                          objectFit: "cover",
+                          maxWidth: 120,
+                          maxHeight: 120,
+                          width: "auto",
+                          height: "auto",
+                          objectFit: "contain",
+                          borderRadius: 6,
+                          flexShrink: 0,
+                          background: "#eee",
                         }}
                       />
                     ) : (
-                      <span style={{ opacity: 0.6 }}>No image</span>
+                      <div
+                        style={{
+                          width: 120,
+                          height: 120,
+                          borderRadius: 6,
+                          background: "#eee",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          opacity: 0.6,
+                          flexShrink: 0,
+                          fontSize: 12,
+                          textAlign: "center",
+                        }}
+                      >
+                        No image
+                      </div>
                     )}
-                  </div>
-
-                  <div style={{ padding: 12 }}>
-                    <h3 style={{ margin: "0 0 4px" }}>
-                      {title}{" "}
-                      {year ? (
-                        <span style={{ opacity: 0.7, fontWeight: 400 }}>
-                          ({year})
-                        </span>
-                      ) : null}
-                    </h3>
-                    <p
-                      style={{
-                        margin: 0,
-                        opacity: 0.85,
-                        whiteSpace: "pre-line",
-                      }}
-                    >
-                      {truncate(r.reviewText, 120)}
-                    </p>
-                    <small
-                      style={{
-                        opacity: 0.7,
-                        display: "inline-block",
-                        marginTop: 8,
-                      }}
-                    >
-                      {new Date(r.createdAt).toLocaleDateString("en-GB", {
-                        year: "numeric",
-                        month: "short",
-                        day: "numeric",
-                      })}
-                    </small>
                   </div>
                 </Link>
               </li>
