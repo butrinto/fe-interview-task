@@ -1,10 +1,9 @@
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useReviews } from "../context/ReviewsContext";
 
 export default function ReviewShow() {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
-  const { getReviewById, deleteReview, films, loadFilms } = useReviews();
+  const { getReviewById, films, loadFilms } = useReviews();
 
   // Ensure films are loaded for lookup
   if (films.length === 0) {
@@ -23,13 +22,6 @@ export default function ReviewShow() {
   }
 
   const film = films.find((f) => f.id === review.filmId);
-
-  const handleDelete = () => {
-    if (confirm("Are you sure you want to delete this review?")) {
-      deleteReview(review.id);
-      navigate("/reviews");
-    }
-  };
 
   return (
     <div>

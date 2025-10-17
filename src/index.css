@@ -27,20 +27,22 @@ a {
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
   gap: 8px;
-  padding: 10px 12px;
+  padding: 16px 20px; /* thicker header */
   background: var(--header-bg);
   color: #fff;
 }
 
 .app-header .h-title {
   justify-self: center;
-  font-size: 22px;
-  font-weight: 600;
+  font-size: 26px; /* slightly larger text */
+  font-weight: 700; /* stronger weight for prominence */
+  letter-spacing: 0.3px;
 }
 
 .app-header .h-left {
   justify-self: start;
 }
+
 .app-header .h-right {
   justify-self: end;
 }
@@ -72,9 +74,10 @@ a {
 /* Responsive tweaks */
 @media (max-width: 600px) {
   .app-header {
-    padding: 8px 10px;
+    padding: 12px 14px; /* still thicker than before */
   }
+
   .app-header .h-title {
-    font-size: 20px;
+    font-size: 22px; /* still larger than previous mobile size */
   }
 }

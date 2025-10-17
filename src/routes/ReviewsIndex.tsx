@@ -45,10 +45,14 @@ export default function ReviewsIndex() {
 
   return (
     <div>
-      <h2>My Reviews</h2>
-
       {/* Controls */}
-      <div style={{ display: "grid", gap: 8, marginBottom: 12 }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          marginBottom: 12,
+        }}
+      >
         {/* Search bar hidden as not part of wireframe - kept for future use */}
         {false && (
           <input
@@ -72,7 +76,7 @@ export default function ReviewsIndex() {
             padding: 10,
             borderRadius: 8,
             border: "1px solid #ddd",
-            maxWidth: 260,
+            minWidth: 200,
           }}
           aria-label="Filter reviews by genre"
         >
