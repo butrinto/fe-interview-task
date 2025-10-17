@@ -7,23 +7,31 @@ export default function ReviewsIndex() {
     useReviews();
   const [genre, setGenre] = useState<string>("All");
 
+  // Load films when the page mounts
   useEffect(() => {
     loadFilms();
   }, [loadFilms]);
 
+  // Build unique, sorted genre list from films
   const genres = useMemo(() => {
     const set = new Set<string>();
     films.forEach((f) => f.genres?.forEach((g) => set.add(g)));
     return ["All", ...Array.from(set).sort()];
   }, [films]);
 
+  // Helpers to look up film metadata
   const getFilm = (filmId: string) => films.find((f) => f.id === filmId);
   const getTitle = (filmId: string, fallback: string) =>
     getFilm(filmId)?.title ?? fallback;
-  const getYear = (filmId: string) =>
-    getFilm(filmId)?.release_year ?? undefined;
+  const getYear = (filmId: string) => getFilm(filmId)?.release_year;
   const getImage = (filmId: string) => getFilm(filmId)?.image_url ?? "";
+  const getDirector = (filmId: string): string | undefined => {
+    const film = getFilm(filmId);
+    const director = film?.cast?.find((p) => p.credits?.includes("Director"));
+    return director?.name;
+  };
 
+  // Apply search + genre filters
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
     return reviews
@@ -35,10 +43,15 @@ export default function ReviewsIndex() {
       });
   }, [reviews, search, genre, films]);
 
+  // Thumbnail box size (keep in one place so it's easy to tweak)
+  const THUMB_W = 120;
+  const THUMB_H = 80;
+
   return (
     <div>
       <h2>My Reviews</h2>
 
+      {/* Controls */}
       <div style={{ display: "grid", gap: 8, marginBottom: 12 }}>
         <input
           value={search}
@@ -87,112 +100,112 @@ export default function ReviewsIndex() {
             padding: 0,
             margin: 0,
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
-            gap: 12,
+            gridTemplateColumns: "1fr",
           }}
         >
-          {filtered.map((r) => {
+          {filtered.map((r, idx) => {
             const title = getTitle(r.filmId, r.filmTitle);
             const year = getYear(r.filmId);
+            const director = getDirector(r.filmId);
             const img = getImage(r.filmId);
 
             return (
               <li
                 key={r.id}
                 style={{
-                  border: "1px solid #ddd",
-                  borderRadius: 8,
-                  overflow: "hidden",
-                  background: "#fff",
+                  padding: "16px 0",
+                  borderTop: idx === 0 ? "none" : "1px solid #e6e6e6",
                 }}
               >
-                <Link
-                  to={`/reviews/${r.id}`}
+                <div
                   style={{
-                    display: "block",
-                    textDecoration: "none",
-                    color: "inherit",
+                    display: "flex",
+                    alignItems: "flex-start",
+                    gap: 12,
                   }}
                 >
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "flex-start",
-                      gap: 12,
-                      padding: 12,
-                    }}
-                  >
-                    <div style={{ flex: 1 }}>
-                      <h3 style={{ margin: "0 0 4px" }}>
-                        {title}{" "}
-                        {year ? (
-                          <span style={{ opacity: 0.7, fontWeight: 400 }}>
-                            ({year})
-                          </span>
-                        ) : null}
+                  {/* Text on the left */}
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    {/* Meta block; minHeight ensures the paragraph starts under the thumbnail */}
+                    <div style={{ minHeight: THUMB_H }}>
+                      <h3 style={{ margin: "0 0 4px", fontSize: 18 }}>
+                        <strong>{title}</strong>
                       </h3>
-
-                      <p
-                        style={{
-                          margin: 0,
-                          opacity: 0.85,
-                          whiteSpace: "pre-line",
-                        }}
-                      >
-                        {truncate(r.reviewText, 120)}
-                      </p>
-
-                      <small
-                        style={{
-                          opacity: 0.7,
-                          display: "inline-block",
-                          marginTop: 8,
-                        }}
-                      >
-                        {new Date(r.createdAt).toLocaleDateString("en-GB", {
-                          year: "numeric",
-                          month: "short",
-                          day: "numeric",
-                        })}
-                      </small>
+                      {director && (
+                        <div style={{ margin: 0, opacity: 0.9 }}>
+                          {director}
+                        </div>
+                      )}
+                      {year && (
+                        <div style={{ margin: "2px 0 0", opacity: 0.9 }}>
+                          {year}
+                        </div>
+                      )}
                     </div>
 
+                    <p
+                      style={{
+                        margin: 0,
+                        marginTop: 10,
+                        opacity: 0.85,
+                        whiteSpace: "pre-line",
+                        fontSize: 14, // one step smaller
+                        lineHeight: 1.4,
+                      }}
+                    >
+                      {truncate(r.reviewText, 120)}
+                    </p>
+
+                    <div style={{ marginTop: 10 }}>
+                      <Link
+                        to={`/reviews/${r.id}`}
+                        style={{ color: "rebeccapurple", fontWeight: 600 }}
+                      >
+                        Read more
+                      </Link>
+                    </div>
+                  </div>
+
+                  {/* Poster on the right, cropped to fill (no bars) */}
+                  <div
+                    style={{
+                      width: THUMB_W,
+                      height: THUMB_H,
+                      border: "1px solid #ddd",
+                      borderRadius: 8,
+                      background: "#f3f3f3",
+                      overflow: "hidden",
+                      flexShrink: 0,
+                    }}
+                  >
                     {img ? (
                       <img
                         src={img}
-                        alt={title}
+                        alt={`${title} poster`}
                         style={{
-                          maxWidth: 120,
-                          maxHeight: 120,
-                          width: "auto",
-                          height: "auto",
-                          objectFit: "contain",
-                          borderRadius: 6,
-                          flexShrink: 0,
-                          background: "#eee",
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "cover", // fill the box, crop if needed
+                          display: "block",
                         }}
                       />
                     ) : (
                       <div
                         style={{
-                          width: 120,
-                          height: 120,
-                          borderRadius: 6,
-                          background: "#eee",
+                          width: "100%",
+                          height: "100%",
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "center",
                           opacity: 0.6,
-                          flexShrink: 0,
                           fontSize: 12,
-                          textAlign: "center",
                         }}
                       >
                         No image
                       </div>
                     )}
                   </div>
-                </Link>
+                </div>
               </li>
             );
           })}

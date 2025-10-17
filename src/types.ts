@@ -6,6 +6,14 @@ export type Film = {
   release_year?: number;
   genres?: string[];
   image_url?: string;
+  video_url?: string;
+
+  // Optional cast list for director and credits lookup
+  cast?: {
+    id: string;
+    name: string;
+    credits?: string[];
+  }[];
 };
 
 export type Review = {
