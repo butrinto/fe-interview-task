@@ -30,33 +30,13 @@ export default function ReviewShow() {
   )?.name;
   const img = film?.image_url;
 
-  // Image size for the header row
-  const IMG_W = 180;
-  const IMG_H = 100;
-
   return (
     <div style={{ padding: "20px 16px 24px" }}>
       {/* Header row: meta (left) + image (right) */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center", // vertically centre left meta against the image
-          gap: 16,
-          marginBottom: 18, // space before the review body starts
-        }}
-      >
-        {/* Left meta, centred vertically within the row */}
-        <div
-          style={{
-            flex: 1,
-            minWidth: 0,
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            minHeight: IMG_H, // ensures the meta block is centred relative to the image height
-          }}
-        >
-          <h2 style={{ margin: "0 0 6px" }}>{title}</h2>
+      <div className="review-header-row">
+        {/* Left meta */}
+        <div className="review-meta">
+          <h2 style={{ margin: "0 0 10px" }}>{title}</h2>
           {director && (
             <div style={{ margin: 0, opacity: 0.9 }}>{director}</div>
           )}
@@ -64,28 +44,9 @@ export default function ReviewShow() {
         </div>
 
         {/* Poster on the right */}
-        <div
-          style={{
-            width: IMG_W,
-            height: IMG_H,
-            border: "1px solid #ddd",
-            borderRadius: 10,
-            background: "#f3f3f3",
-            overflow: "hidden",
-            flexShrink: 0,
-          }}
-        >
+        <div className="review-image">
           {img ? (
-            <img
-              src={img}
-              alt={title}
-              style={{
-                width: "100%",
-                height: "100%",
-                objectFit: "cover",
-                display: "block",
-              }}
-            />
+            <img src={img} alt={title} />
           ) : (
             <div
               style={{
@@ -104,8 +65,8 @@ export default function ReviewShow() {
         </div>
       </div>
 
-      {/* Review body sits beneath the whole header block */}
-      <p style={{ whiteSpace: "pre-line", margin: "0 0 14px" }}>
+      {/* Review body sits beneath the header block */}
+      <p style={{ whiteSpace: "pre-line", margin: "20px 0 6px" }}>
         {review.reviewText}
       </p>
 
