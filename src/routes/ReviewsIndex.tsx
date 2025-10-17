@@ -164,7 +164,12 @@ export default function ReviewsIndex() {
                     <div style={{ marginTop: 10 }}>
                       <Link
                         to={`/reviews/${r.id}`}
-                        style={{ color: "rebeccapurple", fontWeight: 600 }}
+                        style={{
+                          color: "rebeccapurple",
+                          fontWeight: 600,
+                          fontSize: 13, // reduced size
+                          textDecoration: "none",
+                        }}
                       >
                         Read more
                       </Link>
