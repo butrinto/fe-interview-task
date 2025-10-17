@@ -48,9 +48,8 @@ export default function ReviewsIndex() {
       {/* Controls */}
       <div
         style={{
-          display: "flex",
-          justifyContent: "center",
           marginBottom: 12,
+          padding: "0 12px", // keeps spacing consistent with header sides
         }}
       >
         {/* Search bar hidden as not part of wireframe - kept for future use */}
@@ -73,10 +72,12 @@ export default function ReviewsIndex() {
           value={genre}
           onChange={(e) => setGenre(e.target.value)}
           style={{
+            width: "100%", // full width across the screen
             padding: 10,
             borderRadius: 8,
             border: "1px solid #ddd",
-            minWidth: 200,
+            fontSize: 16,
+            background: "#fff",
           }}
           aria-label="Filter reviews by genre"
         >
@@ -125,6 +126,7 @@ export default function ReviewsIndex() {
                     display: "flex",
                     alignItems: "flex-start",
                     gap: 12,
+                    padding: "0 12px",
                   }}
                 >
                   {/* Text on the left */}
