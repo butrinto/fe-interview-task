@@ -4,14 +4,16 @@ import { useReviews } from "../context/ReviewsContext";
 
 export default function ReviewsIndex() {
   const { loadFilms, films, reviews, loadingFilms } = useReviews();
-  const [genre, setGenre] = useState<string>("All");
+
+  // Start with no selection so the placeholder shows
+  const [genre, setGenre] = useState<string>("");
 
   // Load films on mount
   useEffect(() => {
     loadFilms();
   }, [loadFilms]);
 
-  // Unique, sorted genre list
+  // Unique, sorted genre list (keeps "All" as an explicit option)
   const genres = useMemo(() => {
     const set = new Set<string>();
     films.forEach((f) => f.genres?.forEach((g) => set.add(g)));
@@ -30,10 +32,10 @@ export default function ReviewsIndex() {
     return director?.name;
   };
 
-  // Apply genre filter (search hidden for now)
+  // Apply genre filter (empty string or "All" means "no filter")
   const filtered = useMemo(() => {
     return reviews.filter((r) => {
-      if (genre === "All") return true;
+      if (genre === "" || genre === "All") return true;
       const film = getFilm(r.filmId);
       return film?.genres?.includes(genre) ?? false;
     });
@@ -60,6 +62,10 @@ export default function ReviewsIndex() {
           }}
           aria-label="Filter reviews by genre"
         >
+          {/* Placeholder shown until a real value is chosen */}
+          <option value="" disabled>
+            Filter by genre
+          </option>
           {genres.map((g) => (
             <option key={g} value={g}>
               {g}
