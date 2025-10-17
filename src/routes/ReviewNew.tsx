@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import type { FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { useReviews } from "../context/ReviewsContext";
@@ -13,10 +13,25 @@ export default function ReviewNew() {
   const [error, setError] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
 
-  // Ensure films are loaded
+  const wrapRef = useRef<HTMLLabelElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  // Ensure film data is loaded
   useEffect(() => {
     if (films.length === 0) loadFilms();
   }, [films, loadFilms]);
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    function onDocDown(e: MouseEvent) {
+      if (!wrapRef.current) return;
+      if (!wrapRef.current.contains(e.target as Node)) {
+        setShowDropdown(false);
+      }
+    }
+    document.addEventListener("mousedown", onDocDown);
+    return () => document.removeEventListener("mousedown", onDocDown);
+  }, []);
 
   // Filter films by search query
   const filteredFilms = useMemo(() => {
@@ -48,8 +63,6 @@ export default function ReviewNew() {
     navigate(`/reviews/${newId}`);
   };
 
-  const selectedFilm = films.find((f) => f.id === filmId);
-
   return (
     <div>
       <h2>Write a Review</h2>
@@ -58,25 +71,42 @@ export default function ReviewNew() {
         onSubmit={handleSubmit}
         style={{ display: "flex", flexDirection: "column", gap: 14 }}
       >
-        <label style={{ position: "relative" }}>
+        <label ref={wrapRef} style={{ position: "relative", display: "block" }}>
           <span style={{ display: "block", marginBottom: 6 }}>
             Search for a Film
           </span>
+
+          {/* Native search input */}
           <input
+            ref={inputRef}
+            type="search"
             value={search}
             onChange={(e) => {
-              setSearch(e.target.value);
+              const val = e.target.value;
+              setSearch(val);
               setShowDropdown(true);
+              // clear the selected film
+              if (filmId) setFilmId("");
             }}
             onFocus={() => setShowDropdown(true)}
+            onKeyDown={(e) => {
+              if (e.key === "Escape") setShowDropdown(false);
+            }}
+            onBlur={() => {
+              // allow clicking a result before closing
+              setTimeout(() => setShowDropdown(false), 120);
+            }}
             placeholder="Type a film title..."
             style={{
               width: "100%",
-              padding: "10px 12px",
+              padding: "12px 14px",
               borderRadius: 8,
               border: "1px solid #ddd",
               fontSize: 16,
+              lineHeight: 1.4,
             }}
+            aria-label="Search for a film"
+            autoComplete="off"
           />
 
           {/* Dropdown results */}
@@ -96,6 +126,8 @@ export default function ReviewNew() {
                 overflowY: "auto",
                 zIndex: 20,
               }}
+              role="listbox"
+              aria-label="Search results"
             >
               {filteredFilms.map((f) => (
                 <button
@@ -117,6 +149,8 @@ export default function ReviewNew() {
                     cursor: "pointer",
                     fontSize: 16,
                   }}
+                  role="option"
+                  aria-selected={f.id === filmId}
                 >
                   {f.title}{" "}
                   {f.release_year && (
@@ -127,19 +161,6 @@ export default function ReviewNew() {
             </div>
           )}
         </label>
-
-        {selectedFilm && (
-          <div
-            style={{
-              marginTop: 4,
-              fontSize: 15,
-              opacity: 0.9,
-              color: "#333",
-            }}
-          >
-            Selected: <strong>{selectedFilm.title}</strong>
-          </div>
-        )}
 
         <label>
           <span style={{ display: "block", marginBottom: 6 }}>Review</span>
