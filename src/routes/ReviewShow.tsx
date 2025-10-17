@@ -59,25 +59,6 @@ export default function ReviewShow() {
           })}
         </small>
       </p>
-
-      <div style={{ marginTop: 20 }}>
-        <button
-          onClick={handleDelete}
-          style={{
-            background: "red",
-            color: "white",
-            border: "none",
-            borderRadius: 4,
-            padding: "8px 16px",
-            cursor: "pointer",
-          }}
-        >
-          Delete Review
-        </button>
-        <Link to="/reviews" style={{ marginLeft: 12 }}>
-          Back to Reviews
-        </Link>
-      </div>
     </div>
   );
 }
