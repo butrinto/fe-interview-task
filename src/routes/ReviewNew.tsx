@@ -15,8 +15,12 @@ export default function ReviewNew() {
 
   const wrapRef = useRef<HTMLLabelElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const firstOptionRef = useRef<HTMLButtonElement>(null);
 
-  // Ensure film data is loaded
+  // stable id for listbox
+  const listboxId = "film-search-results";
+
+  // Ensure films are loaded
   useEffect(() => {
     if (films.length === 0) loadFilms();
   }, [films, loadFilms]);
@@ -76,7 +80,7 @@ export default function ReviewNew() {
             Search for a Film
           </span>
 
-          {/* Native search input */}
+          {/* Native search input with simple combobox ARIA */}
           <input
             ref={inputRef}
             type="search"
@@ -85,12 +89,19 @@ export default function ReviewNew() {
               const val = e.target.value;
               setSearch(val);
               setShowDropdown(true);
-              // clear the selected film
               if (filmId) setFilmId("");
             }}
             onFocus={() => setShowDropdown(true)}
             onKeyDown={(e) => {
-              if (e.key === "Escape") setShowDropdown(false);
+              if (e.key === "Escape") {
+                setShowDropdown(false);
+                return;
+              }
+              if (e.key === "ArrowDown") {
+                // move focus into listbox
+                e.preventDefault();
+                firstOptionRef.current?.focus();
+              }
             }}
             onBlur={() => {
               // allow clicking a result before closing
@@ -106,6 +117,9 @@ export default function ReviewNew() {
               lineHeight: 1.4,
             }}
             aria-label="Search for a film"
+            aria-expanded={showDropdown}
+            aria-controls={listboxId}
+            aria-autocomplete="list"
             autoComplete="off"
           />
 
@@ -127,9 +141,10 @@ export default function ReviewNew() {
                 zIndex: 20,
               }}
               role="listbox"
+              id={listboxId}
               aria-label="Search results"
             >
-              {filteredFilms.map((f) => (
+              {filteredFilms.map((f, i) => (
                 <button
                   key={f.id}
                   type="button"
@@ -137,7 +152,11 @@ export default function ReviewNew() {
                     setFilmId(f.id);
                     setSearch(f.title);
                     setShowDropdown(false);
+                    // return focus to textarea for faster typing
+                    // (kept simple; remove if you prefer staying on input)
+                    // document.getElementById("review-textarea")?.focus();
                   }}
+                  ref={i === 0 ? firstOptionRef : undefined}
                   style={{
                     display: "block",
                     width: "100%",
@@ -165,6 +184,7 @@ export default function ReviewNew() {
         <label>
           <span style={{ display: "block", marginBottom: 6 }}>Review</span>
           <textarea
+            // id="review-textarea"
             value={reviewText}
             onChange={(e) => setReviewText(e.target.value)}
             rows={6}

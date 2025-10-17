@@ -39,40 +39,19 @@ export default function ReviewsIndex() {
     });
   }, [reviews, genre, films]);
 
-  // Thumbnail size
-  const THUMB_W = 120;
-  const THUMB_H = 80;
+  // Wireframe-style thumbnail on the right
+  const THUMB_W = 180;
+  const THUMB_H = 90;
 
   return (
     <div>
       {/* Controls */}
-      <div
-        style={{
-          marginBottom: 12,
-          padding: "0 12px", // keeps spacing consistent with header sides
-        }}
-      >
-        {/* Search bar hidden as not part of wireframe - kept for future use */}
-        {false && (
-          <input
-            value={""}
-            onChange={() => {}}
-            placeholder="Search by film title…"
-            style={{
-              width: "100%",
-              padding: 10,
-              borderRadius: 8,
-              border: "1px solid #ddd",
-            }}
-            aria-label="Search reviews by film title"
-          />
-        )}
-
+      <div style={{ marginBottom: 12, padding: "0 12px" }}>
         <select
           value={genre}
           onChange={(e) => setGenre(e.target.value)}
           style={{
-            width: "100%", // full width across the screen
+            width: "100%",
             padding: 10,
             borderRadius: 8,
             border: "1px solid #ddd",
@@ -121,71 +100,63 @@ export default function ReviewsIndex() {
                   borderTop: idx === 0 ? "none" : "1px solid #e6e6e6",
                 }}
               >
+                {/* Card layout: grid so body spans both columns under the image */}
                 <div
                   style={{
-                    display: "flex",
-                    alignItems: "flex-start",
-                    gap: 12,
+                    display: "grid",
+                    gridTemplateColumns: `1fr ${THUMB_W}px`,
+                    gridTemplateRows: "auto auto",
+                    gridTemplateAreas: `
+                      "meta thumb"
+                      "body body"
+                    `,
+                    columnGap: 12,
+                    rowGap: 20,
                     padding: "0 12px",
+                    alignItems: "center",
                   }}
                 >
-                  {/* Text on the left */}
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    {/* Reserve height so the paragraph starts under the thumbnail */}
-                    <div style={{ minHeight: THUMB_H }}>
-                      <h3 style={{ margin: "0 0 4px", fontSize: 18 }}>
-                        <strong>{title}</strong>
-                      </h3>
-                      {director && (
-                        <div style={{ margin: 0, opacity: 0.9 }}>
-                          {director}
-                        </div>
-                      )}
-                      {year && (
-                        <div style={{ margin: "2px 0 0", opacity: 0.9 }}>
-                          {year}
-                        </div>
-                      )}
-                    </div>
-
-                    <p
-                      style={{
-                        margin: 0,
-                        marginTop: 10,
-                        opacity: 0.85,
-                        whiteSpace: "pre-line",
-                        fontSize: 14,
-                        lineHeight: 1.4,
-                      }}
-                    >
-                      {truncate(r.reviewText, 120)}
-                    </p>
-
-                    <div style={{ marginTop: 10 }}>
-                      <Link
-                        to={`/reviews/${r.id}`}
+                  {/* Meta (title, director, year) */}
+                  <div style={{ gridArea: "meta", minWidth: 0 }}>
+                    <h3 style={{ margin: "0 0 6px", fontSize: 16 }}>
+                      <strong>{title}</strong>
+                    </h3>
+                    {director && (
+                      <div
                         style={{
-                          color: "rebeccapurple",
-                          fontWeight: 600,
-                          fontSize: 13, // reduced size
-                          textDecoration: "none",
+                          margin: 0,
+                          opacity: 0.9,
+                          fontSize: 12,
+                          lineHeight: 1.3,
                         }}
                       >
-                        Read more
-                      </Link>
-                    </div>
+                        {director}
+                      </div>
+                    )}
+                    {year && (
+                      <div
+                        style={{
+                          marginTop: 2,
+                          opacity: 0.9,
+                          fontSize: 12,
+                          lineHeight: 1.3,
+                        }}
+                      >
+                        {year}
+                      </div>
+                    )}
                   </div>
 
-                  {/* Poster on the right, cropped to fill */}
+                  {/* Poster (right) */}
                   <div
                     style={{
+                      gridArea: "thumb",
                       width: THUMB_W,
                       height: THUMB_H,
                       border: "1px solid #ddd",
-                      borderRadius: 8,
+                      borderRadius: 10,
                       background: "#f3f3f3",
                       overflow: "hidden",
-                      flexShrink: 0,
                     }}
                   >
                     {img ? (
@@ -214,6 +185,35 @@ export default function ReviewsIndex() {
                         No image
                       </div>
                     )}
+                  </div>
+
+                  {/* Body sits beneath both columns */}
+                  <div style={{ gridArea: "body", minWidth: 0 }}>
+                    <p
+                      style={{
+                        margin: 0,
+                        opacity: 0.85,
+                        whiteSpace: "pre-line",
+                        fontSize: 13,
+                        lineHeight: 1.4,
+                      }}
+                    >
+                      {truncate(r.reviewText, 120)}
+                    </p>
+
+                    <div style={{ marginTop: 10 }}>
+                      <Link
+                        to={`/reviews/${r.id}`}
+                        style={{
+                          color: "rebeccapurple",
+                          fontWeight: 600,
+                          fontSize: 12,
+                          textDecoration: "none",
+                        }}
+                      >
+                        Read more
+                      </Link>
+                    </div>
                   </div>
                 </div>
               </li>

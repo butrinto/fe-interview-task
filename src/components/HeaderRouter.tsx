@@ -28,7 +28,7 @@ export default function HeaderRouter() {
             onClick={() => navigate("/reviews")}
             aria-label="Back to reviews"
           >
-            <img src="/back-arrow.svg" alt="" />
+            <img src="/back-arrow.svg" alt="" aria-hidden="true" />
           </button>
         }
         right={
@@ -37,7 +37,7 @@ export default function HeaderRouter() {
             onClick={handleDelete}
             aria-label="Delete review"
           >
-            <img src="/delete.svg" alt="" />
+            <img src="/delete.svg" alt="" aria-hidden="true" />
           </button>
         }
       />
@@ -55,7 +55,7 @@ export default function HeaderRouter() {
             onClick={() => navigate("/reviews")}
             aria-label="Back to reviews"
           >
-            <img src="/back-arrow.svg" alt="" />
+            <img src="/back-arrow.svg" alt="" aria-hidden="true" />
           </button>
         }
       />
@@ -68,7 +68,7 @@ export default function HeaderRouter() {
       title="Film Log"
       right={
         <Link to="/new" className="icon-btn" aria-label="Add new review">
-          <img src="/plus-add.svg" alt="" />
+          <img src="/plus-add.svg" alt="" aria-hidden="true" />
         </Link>
       }
     />
