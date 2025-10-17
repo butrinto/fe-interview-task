@@ -122,4 +122,8 @@ a {
   .review-image {
     max-width: 140px; /* smaller image for phones */
   }
+  .review-meta h2 {
+    font-size: 18px; /* smaller title on phones */
+    margin: 0 0 8px;
+  }
 }
