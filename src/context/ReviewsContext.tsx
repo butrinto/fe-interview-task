@@ -9,7 +9,6 @@ import {
 import { API_URL } from "../constants";
 import type { Film, Review } from "../types";
 
-// Global shape of our store
 type ReviewsStore = {
   films: Film[];
   reviews: Review[];
@@ -25,7 +24,6 @@ type ReviewsStore = {
 const STORAGE_KEY = "mubi-reviews:v1";
 const ReviewsContext = createContext<ReviewsStore | null>(null);
 
-// Helper functions for loading/saving reviews in localStorage
 function loadReviewsFromStorage(): Review[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -39,7 +37,7 @@ function saveReviewsToStorage(reviews: Review[]) {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(reviews));
   } catch {
-    // ignore write errors (e.g. private mode)
+    // ignore write errors
   }
 }
 
@@ -51,14 +49,12 @@ export function ReviewsProvider({ children }: { children: React.ReactNode }) {
   const [loadingFilms, setLoadingFilms] = useState(false);
   const [search, setSearch] = useState("");
 
-  // Save reviews to localStorage whenever they change
   useEffect(() => {
     saveReviewsToStorage(reviews);
   }, [reviews]);
 
   const loadedRef = useRef(false);
 
-  // Fetch film data from API_URL
   const loadFilms = () => {
     if (loadedRef.current || loadingFilms) return;
     loadedRef.current = true;
@@ -75,10 +71,17 @@ export function ReviewsProvider({ children }: { children: React.ReactNode }) {
       .finally(() => setLoadingFilms(false));
   };
 
-  // Placeholder logic for adding/deleting reviews
   const addReview: ReviewsStore["addReview"] = ({ film, reviewText }) => {
     const now = new Date().toISOString();
-    const id = Math.random().toString(36).slice(2, 10);
+
+    // Simple, readable ID using API id and year
+    let id = `${film.id}-${film.release_year ?? ""}`;
+
+    // ensure uniqueness if duplicate year/title combo somehow exists
+    if (reviews.some((r) => r.id === id)) {
+      id = `${id}-${Math.random().toString(36).slice(2, 5)}`;
+    }
+
     const review: Review = {
       id,
       filmId: film.id,
@@ -87,6 +90,7 @@ export function ReviewsProvider({ children }: { children: React.ReactNode }) {
       createdAt: now,
       updatedAt: now,
     };
+
     setReviews((prev) => [review, ...prev]);
     return id;
   };
@@ -119,7 +123,6 @@ export function ReviewsProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
-// Hook for consuming the context
 export function useReviews() {
   const ctx = useContext(ReviewsContext);
   if (!ctx) throw new Error("useReviews must be used inside <ReviewsProvider>");
