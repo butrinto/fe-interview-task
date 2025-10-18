@@ -14,7 +14,6 @@ export default function ReviewsIndex() {
     loadFilms();
   }, [loadFilms]);
 
-  // Unique, sorted genre list (keeps "All" as an explicit option)
   const genres = useMemo(() => {
     const set = new Set<string>();
     films.forEach((f) => f.genres?.forEach((g) => set.add(g)));
@@ -33,7 +32,6 @@ export default function ReviewsIndex() {
     return director?.name;
   };
 
-  // Apply genre filter (empty string or "All" means "no filter")
   const filtered = useMemo(() => {
     return reviews.filter((r) => {
       if (genre === "" || genre === "All") return true;
@@ -57,13 +55,13 @@ export default function ReviewsIndex() {
             width: "100%",
             padding: 10,
             borderRadius: 8,
-            border: "1px solid #ddd",
+            border: "1px solid var(--border)",
             fontSize: 16,
-            background: "#fff",
+            background: "var(--surface)",
+            color: "inherit",
           }}
           aria-label="Filter reviews by genre"
         >
-          {/* Placeholder shown until a real value is chosen */}
           <option value="" disabled>
             Filter by genre
           </option>
@@ -79,7 +77,10 @@ export default function ReviewsIndex() {
 
       {!loadingFilms && filtered.length === 0 && (
         <p>
-          No matching reviews. <Link to="/new">Write one</Link>
+          No matching reviews.{" "}
+          <Link to="/new" style={{ color: "var(--link)" }}>
+            Write one
+          </Link>
         </p>
       )}
 
@@ -104,10 +105,9 @@ export default function ReviewsIndex() {
                 key={r.id}
                 style={{
                   padding: "16px 0",
-                  borderTop: idx === 0 ? "none" : "1px solid #e6e6e6",
+                  borderTop: idx === 0 ? "none" : "1px solid var(--border)",
                 }}
               >
-                {/* Card layout: grid so body spans both columns under the image */}
                 <div
                   style={{
                     display: "grid",
@@ -135,6 +135,7 @@ export default function ReviewsIndex() {
                           opacity: 0.9,
                           fontSize: 12,
                           lineHeight: 1.3,
+                          color: "var(--muted-text)",
                         }}
                       >
                         {director}
@@ -147,6 +148,7 @@ export default function ReviewsIndex() {
                           opacity: 0.9,
                           fontSize: 12,
                           lineHeight: 1.3,
+                          color: "var(--muted-text)",
                         }}
                       >
                         {year}
@@ -174,9 +176,9 @@ export default function ReviewsIndex() {
                       gridArea: "thumb",
                       width: THUMB_W,
                       height: THUMB_H,
-                      border: "1px solid #ddd",
+                      border: "1px solid var(--border)",
                       borderRadius: 10,
-                      background: "#f3f3f3",
+                      background: "var(--card-bg)",
                       overflow: "hidden",
                     }}
                   >
@@ -208,7 +210,7 @@ export default function ReviewsIndex() {
                     )}
                   </div>
 
-                  {/* Body sits beneath both columns */}
+                  {/* Body */}
                   <div style={{ gridArea: "body", minWidth: 0 }}>
                     <p
                       style={{
@@ -226,7 +228,7 @@ export default function ReviewsIndex() {
                       <Link
                         to={`/reviews/${r.id}`}
                         style={{
-                          color: "rebeccapurple",
+                          color: "var(--link)",
                           fontWeight: 600,
                           fontSize: 12,
                           textDecoration: "none",

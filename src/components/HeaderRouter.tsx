@@ -1,6 +1,7 @@
 import { Link, matchPath, useLocation, useNavigate } from "react-router-dom";
 import Header from "./Header";
 import { useReviews } from "../context/ReviewsContext";
+import ThemeToggle from "./ThemeToggle";
 
 export default function HeaderRouter() {
   const location = useLocation();
@@ -66,6 +67,7 @@ export default function HeaderRouter() {
   return (
     <Header
       title="Film Log"
+      left={<ThemeToggle />}
       right={
         <Link to="/new" className="icon-btn" aria-label="Add new review">
           <img src="/plus-add.svg" alt="" aria-hidden="true" />
