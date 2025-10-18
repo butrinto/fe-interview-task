@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useReviews } from "../context/ReviewsContext";
+import { StarRating } from "react-flexible-star-rating";
 
 export default function ReviewsIndex() {
   const { loadFilms, films, reviews, loadingFilms } = useReviews();
@@ -122,7 +123,7 @@ export default function ReviewsIndex() {
                     alignItems: "center",
                   }}
                 >
-                  {/* Meta (title, director, year) */}
+                  {/* Meta (title, director, year, rating) */}
                   <div style={{ gridArea: "meta", minWidth: 0 }}>
                     <h3 style={{ margin: "0 0 6px", fontSize: 16 }}>
                       <strong>{title}</strong>
@@ -149,6 +150,20 @@ export default function ReviewsIndex() {
                         }}
                       >
                         {year}
+                      </div>
+                    )}
+
+                    {/* Rating under the year */}
+                    {typeof r.rating === "number" && (
+                      <div style={{ marginTop: 6 }}>
+                        <StarRating
+                          initialRating={r.rating}
+                          onRatingChange={() => {}}
+                          starsLength={5}
+                          isReadOnly={true}
+                          dimension={5}
+                          color="#000000"
+                        />
                       </div>
                     )}
                   </div>
