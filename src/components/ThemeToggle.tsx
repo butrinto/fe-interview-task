@@ -22,16 +22,23 @@ export default function ThemeToggle() {
 
   const next = theme === "light" ? "dark" : "light";
 
+  const iconSrc = theme === "light" ? "/moon-dark.svg" : "/sun-light.svg";
+  const altText =
+    theme === "light" ? "Switch to dark mode" : "Switch to light mode";
+
   return (
     <button
       className="icon-btn"
-      aria-label={`Switch to ${next} mode`}
+      aria-label={altText}
       onClick={() => setTheme(next)}
-      title={`Switch to ${next} mode`}
+      title={altText}
     >
-      <span aria-hidden="true" style={{ fontSize: 18, lineHeight: 1 }}>
-        {theme === "light" ? "D" : "L"}
-      </span>
+      <img
+        src={iconSrc}
+        alt=""
+        aria-hidden="true"
+        style={{ width: 22, height: 22 }}
+      />
     </button>
   );
 }
