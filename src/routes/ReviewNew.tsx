@@ -179,10 +179,10 @@ export default function ReviewNew() {
             initialRating={rating}
             onRatingChange={setRating}
             starsLength={5}
-            dimension={24} // adjust size to taste
+            dimension={10} // adjust size to taste
             isHalfRatingEnabled={false}
             isReadOnly={false}
-            color="#FFD700"
+            color="#000000"
           />
         </div>
 

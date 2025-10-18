@@ -1,6 +1,7 @@
 import { Link, useParams } from "react-router-dom";
 import { useEffect } from "react";
 import { useReviews } from "../context/ReviewsContext";
+import { StarRating } from "react-flexible-star-rating";
 
 export default function ReviewShow() {
   const { id } = useParams<{ id: string }>();
@@ -41,6 +42,21 @@ export default function ReviewShow() {
             <div style={{ margin: 0, opacity: 0.9 }}>{director}</div>
           )}
           {year && <div style={{ marginTop: 2, opacity: 0.9 }}>{year}</div>}
+
+          {/* Rating under year */}
+          {typeof review.rating === "number" && (
+            <div style={{ marginTop: 6 }}>
+              <StarRating
+                initialRating={review.rating ?? 0}
+                onRatingChange={() => {}}
+                starsLength={5}
+                dimension={8}
+                isHalfRatingEnabled={false}
+                isReadOnly={true}
+                color="#000000"
+              />
+            </div>
+          )}
         </div>
 
         {/* Poster on the right */}

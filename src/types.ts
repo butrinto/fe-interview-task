@@ -23,4 +23,5 @@ export type Review = {
   reviewText: string;
   createdAt: string;
   updatedAt: string;
+  rating?: number;
 };
