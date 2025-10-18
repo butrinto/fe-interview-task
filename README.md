@@ -1,50 +1,83 @@
-# _"As a user, I want to keep a log of my film reviews."_
+# Film Log - MUBI Take Home Task
 
-Using React and supporting libraries of your choice, build a simple web application to fulfill this user story. It doesn't need to be polished aesthetically, but it should meet the basic requirements in a robust manner.
+> _“As a user, I want to keep a log of my film reviews.”_
 
-### Basic requirements
+I have developed a React application for this take home task; that allows users to write reviews on certain films, giving ratings and managing previous reviews.
 
-* Creation of a film review with review text attribute.
-* A review can be deleted.
-* Each review should have its own canonical url.
-* Films are searchable by the title field.
-* All reviews are navigable from a single index view.
+I developed this project using Typescript with React as the framework. I have aimed to stay true to the wireframes and requirements for this task.
 
-### Optional bonus features
+There are two versions of this project on seperate branches. I used some additional time to add a few different features to make my project stand out a little, these are found in the `additional-changes` branch.
 
-* The reviews in the index view are filterable by film genre.
-* Reviews are persisted locally and reconstituted when the application is reopened.
-* Apply responsive CSS to optimize the layout for the available screen size.
+---
 
-### Wireframe
+## Features Implemented
 
-Index and show views
+### Core Requirements
 
-![wf1](https://user-images.githubusercontent.com/345715/36377832-6f0cecfa-1570-11e8-89dd-4e26e878ee75.png)
+| Requirement                    | Implementation                                                                                                                   |
+| ------------------------------ | -------------------------------------------------------------------------------------------------------------------------------- |
+| **Create a film review**       | Users are able to write a review for any film within the provided API.                                                           |
+| **Delete a review**            | Reviews can be viewed and deleted with a confirmation.                                                                           |
+| **Canonical URLs for reviews** | Reviews have unique `/reviews/:id` routes, pulled from the title and year id. Year was added to avoid same name titles clashing. |
+| **Search for films by title**  | The new review form includes a search field with a dropdown.                                                                     |
+| **Index view of all reviews**  | `/reviews` displays all reviews with the appropriate thumbnails and data.                                                        |
 
-Form view
+---
 
-![wf2](https://user-images.githubusercontent.com/345715/36377771-34742e6e-1570-11e8-904b-0f5ce3a6c2d9.png)
+### Bonus Features
 
+| Feature                 | Description                                                                                        |
+| ----------------------- | -------------------------------------------------------------------------------------------------- |
+| **Filter by genre**     | Dropdown filter is included in the index/main page to filter reviews by film genre.                |
+| **Local persistence**   | Reviews are held in `localStorage`; they can be restored when the app is reopened/refreshed.       |
+| **Responsive design**   | Mobile and desktop viewing are both responsive, using grid and flex layouts.                       |
+| **Star rating system**  | Integrated an additional feature,`react-flexible-star-rating` for users to assign a visual rating. |
+| **Light & dark themes** | Additional feature; users can toggle between themes via an icon in the header.                     |
+| **ARIA accessibility**  | ARIA attributes used for form fields, search and lists.                                            |
 
-### Development process
+---
 
-This is an opportunity to demonstrate your approach to problem solving, both in terms of the final code and the commits along the way. This part is important, please demonstrate how you approach the task by expressing yourself in a series of incremental commits. You are of course welcome to edit your commit history before sharing your solution.
+## Design Notes
 
-You may wish to fork this repository into your local github account, or you may wish to simply clone it in to a private repository you control. As long as we can see your work, whatever you prefer is fine. When you are ready to share your work please push your work back to your repository, and share the link.
+- The **`main`** branch closely matches the provided wireframes for this task, focusing on functionality.
+- The **`additional-changes`** branch introduces a few extra tidbits:
+  - Star ratings
+  - Theme toggle (light/dark mode)
+  - Subtle accessibility improvements
 
-### Up and running
+---
 
-* Once you have the code checked out locally, first run `npm install`
-* Run `npm run dev` for dev server at http://localhost:5173
-* You can also run `npm run build` to build the app bundle into dist, and then to preview the built app, run `npm run preview`
+## Development Process
 
-### Notes
+My project was built iteratively, with a series of meaningful commits demonstrating:
 
-* Vite boilerplate already included
-* Using icons as in the wireframe is not mandatory
-* The JSON API url (declared in `app/constants.ts`) is a static JSON file containing a limited snapshot of films.
-* For the purpose of this exercise, no state needs to be persisted back to a backend server. It is a 'local' app.
+- Introduction of features
+- Refactors or fixes to maintain clarity in code and structure
+- Commits written with clarity, to illustrate my approach to solving each problem
 
+---
 
-Reach out over email if you have any questions!
+## Accessibility Considerations
+
+- Search dropdown and keyboard focus management for film selection.
+- Descriptive labels and ARIA attributes for interactive elements.
+- Minimal reliance on colour, using themes to manage this
+
+---
+
+## How I would improve with more time
+
+- Match the MUBI aesthetic: refine typography, spacing, and film-poster presentation to emulate MUBI’s cinematic minimalism
+- Interactions: introduce transitions and animations to create a more tactile and responsive feel
+- Accessibility enhancements: improve screen reader experience, add focus outlines and ensure dynamic regions announce properly
+- Desktop optimisation: fine-tune layout spacing and card proportions for larger viewports to allow better viewability on wider screens
+
+---
+
+### Up an running
+
+- npm install
+- use `main` branch for the wireframe accurate
+- use `additional-changes` branch to view the app with additional feature changes
+
+- npm run dev for dev server at http://localhost:5173
