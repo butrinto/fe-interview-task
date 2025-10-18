@@ -53,7 +53,7 @@ export default function ReviewShow() {
                 dimension={8}
                 isHalfRatingEnabled={false}
                 isReadOnly={true}
-                color="#000000"
+                color="var(--star-colour)"
               />
             </div>
           )}

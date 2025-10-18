@@ -16,6 +16,14 @@
 
   /* links */
   --link: rebeccapurple;
+
+  /* existing vars... */
+  --star-colour: #000000;
+}
+
+[data-theme="dark"] {
+  /* existing dark vars... */
+  --star-colour: #ffffff;
 }
 
 [data-theme="dark"] {

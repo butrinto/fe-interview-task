@@ -164,7 +164,7 @@ export default function ReviewsIndex() {
                           starsLength={5}
                           isReadOnly={true}
                           dimension={5}
-                          color="#000000"
+                          color="var(--star-colour)"
                         />
                       </div>
                     )}

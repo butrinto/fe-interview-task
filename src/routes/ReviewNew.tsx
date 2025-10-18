@@ -182,7 +182,7 @@ export default function ReviewNew() {
             dimension={10} // adjust size to taste
             isHalfRatingEnabled={false}
             isReadOnly={false}
-            color="#000000"
+            color="var(--star-colour)"
           />
         </div>
 
