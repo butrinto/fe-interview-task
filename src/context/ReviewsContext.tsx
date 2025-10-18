@@ -15,7 +15,11 @@ type ReviewsStore = {
   loadingFilms: boolean;
   search: string;
   setSearch: (v: string) => void;
-  addReview: (input: { film: Film; reviewText: string }) => string;
+  addReview: (input: {
+    film: Film;
+    reviewText: string;
+    rating: number;
+  }) => string;
   deleteReview: (id: string) => void;
   getReviewById: (id: string) => Review | undefined;
   loadFilms: () => void;

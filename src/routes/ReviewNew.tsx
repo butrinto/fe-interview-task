@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo, useRef } from "react";
 import type { FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { useReviews } from "../context/ReviewsContext";
+import { StarRating } from "react-flexible-star-rating";
 
 export default function ReviewNew() {
   const navigate = useNavigate();
@@ -9,6 +10,7 @@ export default function ReviewNew() {
 
   const [filmId, setFilmId] = useState("");
   const [reviewText, setReviewText] = useState("");
+  const [rating, setRating] = useState<number>(0); // ★ new
   const [search, setSearch] = useState("");
   const [error, setError] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
@@ -17,15 +19,12 @@ export default function ReviewNew() {
   const inputRef = useRef<HTMLInputElement>(null);
   const firstOptionRef = useRef<HTMLButtonElement>(null);
 
-  // stable id for listbox
   const listboxId = "film-search-results";
 
-  // Ensure films are loaded
   useEffect(() => {
     if (films.length === 0) loadFilms();
   }, [films, loadFilms]);
 
-  // Close dropdown on outside click
   useEffect(() => {
     function onDocDown(e: MouseEvent) {
       if (!wrapRef.current) return;
@@ -37,7 +36,6 @@ export default function ReviewNew() {
     return () => document.removeEventListener("mousedown", onDocDown);
   }, []);
 
-  // Filter films by search query
   const filteredFilms = useMemo(() => {
     const q = search.toLowerCase().trim();
     if (!q) return films;
@@ -63,7 +61,7 @@ export default function ReviewNew() {
       return;
     }
 
-    const newId = addReview({ film, reviewText });
+    const newId = addReview({ film, reviewText, rating }); // ★ send rating
     navigate(`/reviews/${newId}`);
   };
 
@@ -80,7 +78,6 @@ export default function ReviewNew() {
             Search for a Film
           </span>
 
-          {/* Native search input with simple combobox ARIA */}
           <input
             ref={inputRef}
             type="search"
@@ -98,13 +95,11 @@ export default function ReviewNew() {
                 return;
               }
               if (e.key === "ArrowDown") {
-                // move focus into listbox
                 e.preventDefault();
                 firstOptionRef.current?.focus();
               }
             }}
             onBlur={() => {
-              // allow clicking a result before closing
               setTimeout(() => setShowDropdown(false), 120);
             }}
             placeholder="Type a film title..."
@@ -123,7 +118,6 @@ export default function ReviewNew() {
             autoComplete="off"
           />
 
-          {/* Dropdown results */}
           {showDropdown && filteredFilms.length > 0 && (
             <div
               style={{
@@ -152,9 +146,6 @@ export default function ReviewNew() {
                     setFilmId(f.id);
                     setSearch(f.title);
                     setShowDropdown(false);
-                    // return focus to textarea for faster typing
-                    // (kept simple; remove if you prefer staying on input)
-                    // document.getElementById("review-textarea")?.focus();
                   }}
                   ref={i === 0 ? firstOptionRef : undefined}
                   style={{
@@ -181,10 +172,23 @@ export default function ReviewNew() {
           )}
         </label>
 
+        {/* ★ Rating picker */}
+        <div>
+          <span style={{ display: "block", marginBottom: 6 }}>Rating</span>
+          <StarRating
+            initialRating={rating}
+            onRatingChange={setRating}
+            starsLength={5}
+            dimension={24} // adjust size to taste
+            isHalfRatingEnabled={false}
+            isReadOnly={false}
+            color="#FFD700"
+          />
+        </div>
+
         <label>
           <span style={{ display: "block", marginBottom: 6 }}>Review</span>
           <textarea
-            // id="review-textarea"
             value={reviewText}
             onChange={(e) => setReviewText(e.target.value)}
             rows={6}
