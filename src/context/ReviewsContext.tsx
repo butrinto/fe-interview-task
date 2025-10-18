@@ -75,7 +75,11 @@ export function ReviewsProvider({ children }: { children: React.ReactNode }) {
       .finally(() => setLoadingFilms(false));
   };
 
-  const addReview: ReviewsStore["addReview"] = ({ film, reviewText }) => {
+  const addReview: ReviewsStore["addReview"] = ({
+    film,
+    reviewText,
+    rating,
+  }) => {
     const now = new Date().toISOString();
 
     // Simple, readable ID using API id and year
@@ -93,6 +97,7 @@ export function ReviewsProvider({ children }: { children: React.ReactNode }) {
       reviewText: reviewText.trim(),
       createdAt: now,
       updatedAt: now,
+      rating, // ← store rating
     };
 
     setReviews((prev) => [review, ...prev]);
